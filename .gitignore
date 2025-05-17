@@ -1,0 +1,7 @@
+.history
+docker-compose.yml
+data/*
+output/*
+
+!data/.gitkeep
+!output/.gitkeep
