@@ -6,10 +6,10 @@ import pandas as pd
 
 def xls_to_xlsx (xls_path, xlsx_path=None):
     output_dir = "output"
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs (output_dir, exist_ok=True)
     if not xlsx_path:
-        base = os.path.splitext(os.path.basename(xls_path))[0]
-        xlsx_path = os.path.join(output_dir, base + '.xlsx')
+        base = os.path.splitext (os.path.basename (xls_path))[0]
+        xlsx_path = os.path.join (output_dir, base + '.xlsx')
     book = xlrd.open_workbook (xls_path)
     wb = Workbook ()
     ws = wb.active
@@ -21,10 +21,10 @@ def xls_to_xlsx (xls_path, xlsx_path=None):
 
 def html_xls_to_xlsx (xls_path, xlsx_path=None):
     output_dir = "output"
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs (output_dir, exist_ok=True)
     if not xlsx_path:
-        base = os.path.splitext(os.path.basename(xls_path))[0]
-        xlsx_path = os.path.join(output_dir, base + '.xlsx')
+        base = os.path.splitext (os.path.basename (xls_path))[0]
+        xlsx_path = os.path.join (output_dir, base + '.xlsx')
     dfs = pd.read_html (xls_path, header=0)
     with pd.ExcelWriter (xlsx_path, engine='openpyxl') as writer:
         for idx, df in enumerate (dfs):
@@ -33,19 +33,24 @@ def html_xls_to_xlsx (xls_path, xlsx_path=None):
     print (f"已將 HTML 格式 {xls_path} 轉換為 {xlsx_path}")
 
 if __name__ == "__main__":
-    data_dir = "data"
-    if not os.path.exists (data_dir):
-        print (f"找不到 {data_dir} 資料夾")
-        sys.exit (1)
-    for filename in os.listdir (data_dir):
-        if filename.lower ().endswith ('.xls') and not filename.lower ().endswith ('.xlsx'):
-            xls_path = os.path.join (data_dir, filename)
+    # 取得執行檔所在目錄
+    if getattr(sys, 'frozen', False):
+        base_dir = os.path.dirname(sys.executable)
+    else:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(base_dir, "data")
+    if not os.path.exists(data_dir):
+        print(f"找不到 {data_dir} 資料夾")
+        sys.exit(1)
+    for filename in os.listdir(data_dir):
+        if filename.lower().endswith('.xls') and not filename.lower().endswith('.xlsx'):
+            xls_path = os.path.join(data_dir, filename)
             try:
-                xls_to_xlsx (xls_path)
+                xls_to_xlsx(xls_path)
             except Exception as e:
-                print (f"{xls_path} 不是標準 xls，嘗試用 HTML 方式轉換...")
+                print(f"{xls_path} 不是標準 xls，嘗試用 HTML 方式轉換...")
                 try:
-                    html_xls_to_xlsx (xls_path)
+                    html_xls_to_xlsx(xls_path)
                 except Exception as e2:
-                    print (f"{xls_path} 轉換失敗: {e2}")
-    print ("全部轉檔完成！")
+                    print(f"{xls_path} 轉換失敗: {e2}")
+    print("全部轉檔完成！")
